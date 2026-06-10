@@ -1,11 +1,24 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
+import AppRoutes from './routes/AppRoutes';
+
+import { loadUser } from './redux/auth/authSlice';
+import { getCart } from './redux/cart/cartSlice';
 function App() {
-  return (
-    <div className="container py-5">
-      <h1 className="text-center">
-        Cosmetics Shop
-      </h1>
-    </div>
-  );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch(loadUser());
+      dispatch(getCart());
+    }
+  }, [dispatch]);
+
+  return <AppRoutes />;
 }
 
 export default App;

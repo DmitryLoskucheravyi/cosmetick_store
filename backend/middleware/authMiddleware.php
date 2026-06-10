@@ -8,7 +8,19 @@ class AuthMiddleware
     public static function authenticate()
     {
         $headers = getallheaders();
+$authHeader =
+    $headers['Authorization']
+    ?? $headers['authorization']
+    ?? $_SERVER['HTTP_AUTHORIZATION']
+    ?? null;
 
+if (!$authHeader) {
+
+    ResponseHelper::error(
+        "Access denied",
+        401
+    );
+}
         if (!isset($headers['Authorization'])) {
 
             ResponseHelper::error(

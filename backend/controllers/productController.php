@@ -49,11 +49,13 @@ class ProductController
     );
 }
 
-    public static function getProduct()
+    public static function getProduct($id = null)
 {
-    $database = Database::connect();
+     $database = Database::connect();
 
-    $id = $_GET['id'] ?? null;
+    if (!$id) {
+        $id = $_GET['id'] ?? null;
+    }
 
     if (!$id) {
 
@@ -235,7 +237,7 @@ class ProductController
         );
     }
 
-    public static function deleteProduct()
+    public static function deleteProduct($id = null)
     {
         require_once __DIR__ . '/../middleware/adminMiddleware.php';
 
@@ -243,7 +245,9 @@ class ProductController
 
         $database = Database::connect();
 
-        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            $id = $_GET['id'] ?? null;
+        }
 
         if (!$id) {
 

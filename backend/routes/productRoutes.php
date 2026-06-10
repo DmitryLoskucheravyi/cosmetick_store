@@ -9,27 +9,54 @@ $requestUri = parse_url(
     PHP_URL_PATH
 );
 
-if ($requestMethod === 'GET' && $requestUri === '/api/products') {
+$segments = explode('/', trim($requestUri, '/'));
 
+$productId = null;
+
+if (
+    count($segments) === 3 &&
+    $segments[0] === 'api' &&
+    $segments[1] === 'products'
+) {
+    $productId = $segments[2];
+}
+
+if (
+    $requestMethod === 'GET' &&
+    $requestUri === '/api/products'
+) {
     ProductController::getProducts();
+    exit();
 }
 
-if ($requestMethod === 'GET' && $requestUri === '/api/products/show') {
-
-    ProductController::getProduct();
+if (
+    $requestMethod === 'GET' &&
+    $productId
+) {
+    ProductController::getProduct($productId);
+    exit();
 }
 
-if ($requestMethod === 'POST' && $requestUri === '/api/products/create') {
-
+if (
+    $requestMethod === 'POST' &&
+    $requestUri === '/api/products'
+) {
     ProductController::createProduct();
+    exit();
 }
 
-if ($requestMethod === 'POST' && $requestUri === '/api/products/update') {
-
+if (
+    $requestMethod === 'PUT' &&
+    $productId
+) {
     ProductController::updateProduct();
+    exit();
 }
 
-if ($requestMethod === 'DELETE' && $requestUri === '/api/products/delete') {
-
-    ProductController::deleteProduct();
+if (
+    $requestMethod === 'DELETE' &&
+    $productId
+) {
+    ProductController::deleteProduct($productId);
+    exit();
 }

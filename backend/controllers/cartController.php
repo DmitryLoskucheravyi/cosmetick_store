@@ -6,36 +6,36 @@ require_once __DIR__ . '/../middleware/authMiddleware.php';
 
 class CartController
 {
-    public static function getCart()
-    {
-        $decoded = AuthMiddleware::authenticate();
+public static function getCart()
+{
+    $decoded = AuthMiddleware::authenticate();
 
-        $database = Database::connect();
+    $database = Database::connect();
 
-        $stmt = $database->prepare(
-            "SELECT
-                c.id,
-                c.quantity,
-                p.id AS productId,
-                p.title,
-                p.price,
-                p.image,
-                (p.price * c.quantity) AS total
-             FROM cart c
-             INNER JOIN products p
-                ON p.id = c.productId
-             WHERE c.userId = ?"
-        );
+    $stmt = $database->prepare(
+        "SELECT
+            c.id,
+            c.quantity,
+            p.id AS productId,
+            p.title,
+            p.price,
+            p.image,
+            (p.price * c.quantity) AS total
+         FROM cart c
+         INNER JOIN products p
+            ON p.id = c.productId
+         WHERE c.userId = ?"
+    );
 
-        $stmt->execute([$decoded->id]);
+    $stmt->execute([$decoded->id]);
 
-        $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        ResponseHelper::success(
-            $cart,
-            "Cart fetched"
-        );
-    }
+    ResponseHelper::success(
+        $cart,
+        "Cart fetched"
+    );
+}
 
     public static function addToCart()
     {
