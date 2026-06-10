@@ -54,6 +54,12 @@ if (strpos($requestUri, '/api/users') === 0) {
     exit();
 }
 
+if (strpos($requestUri, '/api/cart') === 0) {
+
+    require_once __DIR__ . '/routes/cartRoutes.php';
+    exit();
+}
+
 ResponseHelper::error(
     "Route not found",
     404
