@@ -86,17 +86,42 @@ export const updateOrderStatus = createAsyncThunk(
     }
 );
 
+export const getOrderById = createAsyncThunk(
+    'orders/getOrderById',
+    async (id, thunkAPI) => {
+        try {
+
+            const response = await api.get(
+                `/orders/${id}`
+            );
+
+            return response.data.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
 
 const orderSlice = createSlice({
     name: 'orders',
 
     initialState: {
         orders: [],
+        selectedOrder: null,
         loading: false,
         error: null,
     },
 
-    reducers: {},
+    reducers: {
+        clearSelectedOrder: (state) => {
+            state.selectedOrder = null;
+        },
+    },
 
     extraReducers: (builder) => {
 
@@ -124,6 +149,33 @@ const orderSlice = createSlice({
                     state.error = action.payload;
                 }
             )
+            .addCase(
+                getOrderById.pending,
+                (state) => {
+
+                    state.loading = true;
+                }
+            )
+
+            .addCase(
+                getOrderById.fulfilled,
+                (state, action) => {
+
+                    state.loading = false;
+                    state.selectedOrder =
+                        action.payload;
+                }
+            )
+
+            .addCase(
+                getOrderById.rejected,
+                (state, action) => {
+
+                    state.loading = false;
+                    state.error =
+                        action.payload;
+                }
+            )
 
             .addCase(getAllOrders.pending, (state) => {
 
@@ -145,3 +197,7 @@ const orderSlice = createSlice({
 });
 
 export default orderSlice.reducer;
+
+export const {
+    clearSelectedOrder,
+} = orderSlice.actions;

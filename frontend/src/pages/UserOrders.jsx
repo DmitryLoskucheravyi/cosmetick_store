@@ -12,10 +12,18 @@ import {
     Chip,
     Box,
     CircularProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Divider,
+    Avatar,
+    Grid,
 } from '@mui/material';
 
 import {
     getMyOrders,
+    getOrderById,
+    clearSelectedOrder,
 } from '../redux/order/orderSlice';
 
 const UserOrders = () => {
@@ -24,6 +32,7 @@ const UserOrders = () => {
 
     const {
         orders,
+        selectedOrder,
         loading,
     } = useSelector(
         state => state.orders
@@ -105,10 +114,24 @@ const UserOrders = () => {
                     <Paper
                         key={order.id}
                         elevation={0}
+                        onClick={() =>
+                            dispatch(
+                                getOrderById(order.id)
+                            )
+                        }
                         sx={{
                             p: 3,
                             border: '1px solid #eee',
                             borderRadius: 4,
+                            cursor: 'pointer',
+                            transition: '.2s',
+
+                            '&:hover': {
+                                transform:
+                                    'translateY(-2px)',
+                                boxShadow:
+                                    '0 10px 20px rgba(0,0,0,.05)',
+                            },
                         }}
                     >
                         <Box
@@ -171,6 +194,170 @@ const UserOrders = () => {
                 ))}
 
             </Stack>
+
+            <Dialog
+                open={!!selectedOrder}
+                onClose={() =>
+                    dispatch(
+                        clearSelectedOrder()
+                    )
+                }
+                fullWidth
+                maxWidth="md"
+            >
+                <DialogTitle>
+                    Order #
+                    {selectedOrder?.id}
+                </DialogTitle>
+
+                <DialogContent>
+
+                    {selectedOrder && (
+                        <>
+
+                            <Typography
+                                color="text.secondary"
+                            >
+                                {new Date(
+                                    selectedOrder.createdAt
+                                ).toLocaleString()}
+                            </Typography>
+
+                            <Chip
+                                label={
+                                    selectedOrder.status
+                                }
+                                color={
+                                    getStatusColor(
+                                        selectedOrder.status
+                                    )
+                                }
+                                sx={{
+                                    mt: 2,
+                                    mb: 3,
+                                }}
+                            />
+
+                            <Divider
+                                sx={{
+                                    mb: 3,
+                                }}
+                            />
+
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    mb: 2,
+                                }}
+                            >
+                                Products
+                            </Typography>
+
+                            <Grid
+                                container
+                                spacing={2}
+                            >
+
+                                {selectedOrder.items?.map(
+                                    item => (
+
+                                        <Grid
+                                            key={item.id}
+                                            size={{
+                                                xs: 12,
+                                            }}
+                                        >
+                                            <Paper
+                                                elevation={0}
+                                                sx={{
+                                                    p: 2,
+                                                    border:
+                                                        '1px solid #eee',
+                                                    borderRadius: 3,
+                                                    display: 'flex',
+                                                    gap: 2,
+                                                    alignItems:
+                                                        'center',
+                                                }}
+                                            >
+                                                <Avatar
+                                                    src={
+                                                        item.image
+                                                            ? `http://localhost:5000${item.image}`
+                                                            : ''
+                                                    }
+                                                    variant="rounded"
+                                                    sx={{
+                                                        width: 70,
+                                                        height: 70,
+                                                    }}
+                                                />
+
+                                                <Box
+                                                    sx={{
+                                                        flex: 1,
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        fontWeight={600}
+                                                    >
+                                                        {item.title}
+                                                    </Typography>
+
+                                                    <Typography
+                                                        color="text.secondary"
+                                                    >
+                                                        Quantity:
+                                                        {' '}
+                                                        {item.quantity}
+                                                    </Typography>
+                                                </Box>
+
+                                                <Typography
+                                                    fontWeight={700}
+                                                >
+                                                    $
+                                                    {item.price}
+                                                </Typography>
+
+                                            </Paper>
+                                        </Grid>
+
+                                    )
+                                )}
+
+                            </Grid>
+
+                            <Divider
+                                sx={{
+                                    my: 3,
+                                }}
+                            />
+
+                            <Box
+                                sx={{
+                                    textAlign:
+                                        'right',
+                                }}
+                            >
+                                <Typography
+                                    variant="h5"
+                                    fontWeight={700}
+                                >
+                                    Total:
+                                    {' '}
+                                    $
+                                    {
+                                        selectedOrder.totalPrice
+                                    }
+                                </Typography>
+                            </Box>
+
+                        </>
+                    )}
+
+                </DialogContent>
+            </Dialog>
         </>
     );
 };

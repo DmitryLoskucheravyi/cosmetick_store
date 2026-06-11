@@ -9,12 +9,29 @@ $requestUri = parse_url(
     PHP_URL_PATH
 );
 
+$segments = explode('/', trim($requestUri, '/'));
+
+$orderId = null;
+
 if (
-    $requestMethod === 'POST' &&
-    $requestUri === '/api/orders/create'
+    count($segments) === 3 &&
+    $segments[0] === 'api' &&
+    $segments[1] === 'orders'
+) {
+    $orderId = $segments[2];
+}
+
+
+if (
+    $requestMethod === 'GET' &&
+    $orderId &&
+    is_numeric($orderId)
 ) {
 
-    OrderController::createOrder();
+    OrderController::getOrder(
+        $orderId
+    );
+    exit();
 }
 
 if (
@@ -24,6 +41,28 @@ if (
 
     OrderController::getMyOrders();
 }
+
+if (
+    $requestMethod === 'GET' &&
+    $orderId
+) {
+
+    OrderController::getOrder(
+        $orderId
+    );
+
+    exit();
+}
+
+if (
+    $requestMethod === 'POST' &&
+    $requestUri === '/api/orders/create'
+) {
+
+    OrderController::createOrder();
+}
+
+
 
 if (
     $requestMethod === 'GET' &&

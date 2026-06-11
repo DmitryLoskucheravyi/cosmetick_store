@@ -135,6 +135,57 @@ class OrderController
             "Orders fetched"
         );
     }
+    public static function getOrder($id)
+{
+    $decoded = AuthMiddleware::authenticate();
+
+    $database = Database::connect();
+
+    $stmt = $database->prepare(
+        "SELECT *
+         FROM orders
+         WHERE id = ?
+         AND userId = ?"
+    );
+
+    $stmt->execute([
+        $id,
+        $decoded->id
+    ]);
+
+    $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$order) {
+
+        ResponseHelper::error(
+            'Order not found',
+            404
+        );
+    }
+
+    $itemsStmt = $database->prepare(
+        "SELECT
+            oi.*,
+            p.title,
+            p.image
+         FROM order_items oi
+         INNER JOIN products p
+            ON p.id = oi.productId
+         WHERE oi.orderId = ?"
+    );
+
+    $itemsStmt->execute([$id]);
+
+    $order['items'] =
+        $itemsStmt->fetchAll(
+            PDO::FETCH_ASSOC
+        );
+
+    ResponseHelper::success(
+        $order,
+        'Order fetched'
+    );
+}
 
     public static function getAllOrders()
     {
