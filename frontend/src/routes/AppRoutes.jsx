@@ -14,11 +14,12 @@ import ProtectedRoute from './ProtectedRoute';
 import ProductDetails from '../pages/ProductDetails';
 
 import AdminRoute from '../pages/AdminRoute';
-import { CreateProduct } from '../pages/admin/CreateProduct';
+import CreateProduct from '../pages/admin/CreateProduct';
 import { Orders } from '../pages/admin/Orders';
-import { EditProduct } from '../pages/admin/EditProduct';
-import { Dashboard } from '../pages/admin/Dashboard';
+import EditProduct from '../pages/admin/EditProduct';
+import Dashboard from '../pages/admin/Dashboard';
 import { Categories } from '../pages/admin/Categories';
+import Products from '../pages/admin/Products';
 
 
 

@@ -26,7 +26,7 @@ export const createProduct = createAsyncThunk(
         try {
 
             const response = await api.post(
-                '/products/create',
+                '/products',
                 formData,
                 {
                     headers: {
@@ -56,8 +56,10 @@ export const updateProduct = createAsyncThunk(
     async (formData, thunkAPI) => {
         try {
 
+            const id = formData.get('id');
+
             const response = await api.post(
-                '/products/update',
+                `/products/${id}`,
                 formData,
                 {
                     headers: {
@@ -88,7 +90,7 @@ export const deleteProduct = createAsyncThunk(
         try {
 
             await api.delete(
-                `/products/delete?id=${id}`
+                `/products/${id}`
             );
 
             thunkAPI.dispatch(

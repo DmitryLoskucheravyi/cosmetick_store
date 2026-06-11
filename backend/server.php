@@ -1,5 +1,22 @@
 <?php
 
+$path = parse_url(
+    $_SERVER['REQUEST_URI'],
+    PHP_URL_PATH
+);
+
+if (
+    strpos($path, '/uploads/') === 0
+) {
+
+    $file = __DIR__ . $path;
+
+    if (file_exists($file)) {
+        return false;
+    }
+}
+
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 require_once __DIR__ . '/config/cors.php';

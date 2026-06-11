@@ -5,6 +5,10 @@ import productReducer from '../redux/product/productSlice';
 import productDetailsReducer from '../redux/product/productDetailsSlice';
 import cartReducer from '../redux/cart/cartSlice';
 import orderReducer from '../redux/order/orderSlice';
+import categoryReducer from '../redux/category/categorySlice';
+
+
+
 export const store = configureStore({
     reducer: {
         auth: authReducer,
@@ -12,5 +16,6 @@ export const store = configureStore({
         productDetails: productDetailsReducer,
         cart: cartReducer,
         orders: orderReducer,
+        categories: categoryReducer,
     },
 });

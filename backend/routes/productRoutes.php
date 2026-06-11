@@ -46,7 +46,7 @@ if (
 }
 
 if (
-    $requestMethod === 'PUT' &&
+    $requestMethod === 'POST' &&
     $productId
 ) {
     ProductController::updateProduct();

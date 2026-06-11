@@ -95,6 +95,9 @@ class ProductController
 
     public static function createProduct()
     {
+
+    var_dump($_FILES);
+exit();
         require_once __DIR__ . '/../middleware/adminMiddleware.php';
 
         AdminMiddleware::checkAdmin();

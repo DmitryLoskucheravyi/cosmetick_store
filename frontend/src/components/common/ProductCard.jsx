@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
                     alt={product.title}
                     sx={{
                         height: 220,
-                        objectFit: 'cover',
+                        objectFit: 'contain',
                     }}
                 />
 

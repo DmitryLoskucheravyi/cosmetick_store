@@ -51,7 +51,9 @@ const Cart = () => {
 
     if (!items.length) {
         return (
-            <Box textAlign="center" py={10}>
+            <Box sx={{
+                textAlign:"center"
+            }} py={10}>
                 <Typography variant="h4">
                     Your cart is empty
                 </Typography>
@@ -189,7 +191,9 @@ const Cart = () => {
                                     </Box>
 
                                     <Box
-                                        textAlign="right"
+                                        sx={{
+                                            textAlign: "right"
+                                        }}
                                     >
                                         <Typography
                                             variant="h6"
