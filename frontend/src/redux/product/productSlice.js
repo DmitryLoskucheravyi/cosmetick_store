@@ -12,7 +12,9 @@ export const getProducts = createAsyncThunk(
                     params,
                 }
             );
+
             return response.data.data;
+
         } catch (error) {
 
             return thunkAPI.rejectWithValue(
@@ -37,10 +39,6 @@ export const createProduct = createAsyncThunk(
                             'multipart/form-data',
                     },
                 }
-            );
-
-            thunkAPI.dispatch(
-                getProducts()
             );
 
             return response.data;
@@ -72,10 +70,6 @@ export const updateProduct = createAsyncThunk(
                 }
             );
 
-            thunkAPI.dispatch(
-                getProducts()
-            );
-
             return response.data;
 
         } catch (error) {
@@ -96,10 +90,6 @@ export const deleteProduct = createAsyncThunk(
                 `/products/${id}`
             );
 
-            thunkAPI.dispatch(
-                getProducts()
-            );
-
             return id;
 
         } catch (error) {
@@ -118,34 +108,90 @@ const productSlice = createSlice({
         products: [],
         pagination: null,
         loading: false,
+        loadingMore: false,
+        hasMore: true,
         error: null,
     },
 
-    reducers: {},
+    reducers: {
+
+        resetProducts: (state) => {
+
+            state.products = [];
+            state.pagination = null;
+            state.hasMore = true;
+        },
+    },
 
     extraReducers: (builder) => {
 
         builder
 
-            .addCase(getProducts.pending, (state) => {
+            .addCase(getProducts.pending, (state, action) => {
 
-                state.loading = true;
+                const page =
+                    action.meta.arg?.page || 1;
+
+                if (page === 1) {
+
+                    state.loading = true;
+
+                } else {
+
+                    state.loadingMore = true;
+                }
             })
 
-            .addCase(getProducts.fulfilled, (state, action) => {
-                state.loading = false;
-                state.products =
-                    action.payload.products;
-                state.pagination =
-                    action.payload.pagination;
-            })
+            .addCase(
+                getProducts.fulfilled,
+                (state, action) => {
 
-            .addCase(getProducts.rejected, (state, action) => {
+                    state.loading = false;
+                    state.loadingMore = false;
 
-                state.loading = false;
-                state.error = action.payload;
-            });
+                    const {
+                        products,
+                        pagination,
+                    } = action.payload;
+
+                    if (
+                        pagination.page === 1
+                    ) {
+
+                        state.products = products;
+
+                    } else {
+
+                        state.products = [
+                            ...state.products,
+                            ...products,
+                        ];
+                    }
+
+                    state.pagination =
+                        pagination;
+
+                    state.hasMore =
+                        pagination.page <
+                        pagination.pages;
+                }
+            )
+
+            .addCase(
+                getProducts.rejected,
+                (state, action) => {
+
+                    state.loading = false;
+                    state.loadingMore = false;
+                    state.error =
+                        action.payload;
+                }
+            );
     },
 });
+
+export const {
+    resetProducts,
+} = productSlice.actions;
 
 export default productSlice.reducer;
