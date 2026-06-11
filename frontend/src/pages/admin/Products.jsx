@@ -177,8 +177,9 @@ const Products = () => {
                                 <Typography
                                     color="text.secondary"
                                 >
-                                    $
+                                    
                                     {product.price}
+                                    UAH
                                 </Typography>
 
                             </Box>

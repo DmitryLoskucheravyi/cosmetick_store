@@ -1,4 +1,3 @@
-
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,10 +8,9 @@ import {
     Stack,
     Box,
     Button,
-    Divider,
+    Chip,
 } from '@mui/material';
 
-import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 import { logout } from '../redux/auth/authSlice';
@@ -36,89 +34,125 @@ const Profile = () => {
     return (
         <Box
             sx={{
-                maxWidth: 500,
+                maxWidth: 800,
                 mx: 'auto',
             }}
         >
+            <Typography
+                variant="h4"
+                sx={{
+                    fontWeight: 700,
+                    mb: 4,
+                }}
+            >
+                Profile
+            </Typography>
+
             <Paper
                 elevation={0}
                 sx={{
+                    p: 4,
                     border: '1px solid #eee',
                     borderRadius: 4,
-                    p: 4,
                 }}
             >
-                <Stack
-                    spacing={3}
-                    sx={{
-                        alignItems: "center"
-                    }}
-                >
-                    <Avatar
+                <Stack spacing={4}>
+
+                    <Stack
+                        direction="row"
+                        spacing={3}
                         sx={{
-                            width: 72,
-                            height: 72,
-                            bgcolor: 'black',
+                            alignItems:"center"
                         }}
                     >
-                        <PersonIcon />
-                    </Avatar>
+                        <Avatar
+                            sx={{
+                                width: 72,
+                                height: 72,
+                                fontSize: 28,
+                                fontWeight: 700,
+                            }}
+                        >
+                            {user?.name
+                                ?.charAt(0)
+                                ?.toUpperCase()}
+                        </Avatar>
+
+                        <Box>
+                            <Typography
+                                variant="h5"
+                                fontWeight={700}
+                            >
+                                {user?.name}
+                            </Typography>
+
+                            <Typography
+                                color="text.secondary"
+                            >
+                                {user?.email}
+                            </Typography>
+                        </Box>
+                    </Stack>
+
+                    <Chip
+                        label={user?.role}
+                        sx={{
+                            width: 'fit-content',
+                            textTransform:
+                                'capitalize',
+                        }}
+                    />
 
                     <Box
                         sx={{
-                            textAlign: 'center',
+                            display: 'grid',
+                            gap: 2,
                         }}
-                    >
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                fontWeight: 600,
-                            }}
-                        >
-                            {user?.name}
-                        </Typography>
-
-                        <Typography
-                            color="text.secondary"
-                        >
-                            {user?.email}
-                        </Typography>
-                    </Box>
-
-                    <Divider flexItem />
-
-                    <Stack
-                        spacing={2}
-                        width="100%"
                     >
                         <Box>
                             <Typography
                                 variant="caption"
                                 color="text.secondary"
                             >
-                                Role
+                                Full Name
                             </Typography>
 
                             <Typography>
-                                {user?.role}
+                                {user?.name}
                             </Typography>
                         </Box>
 
-                        <Button
-                            variant="outlined"
-                            color="inherit"
-                            startIcon={
-                                <LogoutIcon />
-                            }
-                            onClick={handleLogout}
-                            sx={{
-                                mt: 1,
-                                borderRadius: 3,
-                            }}
-                        >
-                            Logout
-                        </Button>
-                    </Stack>
+                        <Box>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                            >
+                                Email Address
+                            </Typography>
+
+                            <Typography>
+                                {user?.email}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={
+                            <LogoutIcon />
+                        }
+                        onClick={handleLogout}
+                        sx={{
+                            width: 'fit-content',
+                            borderRadius: 3,
+                            textTransform:
+                                'none',
+                        }}
+                    >
+                        Logout
+                    </Button>
+
                 </Stack>
             </Paper>
         </Box>

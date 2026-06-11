@@ -184,7 +184,7 @@ const UserOrders = () => {
                                         fontWeight: 700,
                                     }}
                                 >
-                                    ${order.totalPrice}
+                                    {order.totalPrice} UAH
                                 </Typography>
                             </Box>
 
@@ -316,8 +316,10 @@ const UserOrders = () => {
                                                 <Typography
                                                     fontWeight={700}
                                                 >
-                                                    $
+                                                    
                                                     {item.price}
+
+                                                    UAH
                                                 </Typography>
 
                                             </Paper>
@@ -346,10 +348,10 @@ const UserOrders = () => {
                                 >
                                     Total:
                                     {' '}
-                                    $
+                                    
                                     {
                                         selectedOrder.totalPrice
-                                    }
+                                    } UAH
                                 </Typography>
                             </Box>
 

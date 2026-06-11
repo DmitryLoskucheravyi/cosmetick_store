@@ -91,7 +91,7 @@ const ProductFilters = ({
                         name="search"
                         value={filters.search}
                         onChange={handleChange}
-                        InputProps={{
+                        inputprops={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <SearchIcon />
@@ -109,7 +109,7 @@ const ProductFilters = ({
                         name="category"
                         value={filters.category}
                         onChange={handleChange}
-                        InputProps={{
+                        inputprops={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <CategoryOutlinedIcon />
@@ -162,7 +162,7 @@ const ProductFilters = ({
                         name="stock"
                         value={filters.stock}
                         onChange={handleChange}
-                        InputProps={{
+                        inputprops={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <Inventory2OutlinedIcon />
@@ -196,7 +196,7 @@ const ProductFilters = ({
                         name="sort"
                         value={filters.sort}
                         onChange={handleChange}
-                        InputProps={{
+                        inputprops={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <SortOutlinedIcon />

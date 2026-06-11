@@ -104,7 +104,7 @@ const ProductCard = ({ product }) => {
                             fontWeight: 700,
                         }}
                     >
-                        ${product.price}
+                        {product.price} UAH
                     </Typography>
 
                     <Button

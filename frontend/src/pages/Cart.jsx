@@ -222,7 +222,7 @@ const Cart = () => {
                                                 fontWeight: 700,
                                             }}
                                         >
-                                            ${item.total}
+                                            {item.total} UAH
                                         </Typography>
 
                                         <Button
@@ -283,7 +283,7 @@ const Cart = () => {
                                 variant="h6"
                                 fontWeight={700}
                             >
-                                ${totalPrice.toFixed(2)}
+                                {totalPrice.toFixed(2)} UAH
                             </Typography>
                         </Box>
                         <Button
@@ -331,7 +331,7 @@ const Cart = () => {
                             fontWeight: 700,
                         }}
                     >
-                        ${totalPrice.toFixed(2)}
+                       {totalPrice.toFixed(2)} UAH
                     </Typography>
 
                 </DialogContent>

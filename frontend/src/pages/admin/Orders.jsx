@@ -130,7 +130,7 @@ const Orders = () => {
                                 </TableCell>
 
                                 <TableCell>
-                                    ${order.totalPrice}
+                                    {order.totalPrice} UAH
                                 </TableCell>
 
                                 <TableCell>
