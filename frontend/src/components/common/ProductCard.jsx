@@ -7,12 +7,23 @@ import {
     Chip,
 } from '@mui/material';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/cart/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     return (
         <Card
+            onClick={() =>
+                navigate(`/products/${product.id}`)
+            }
             sx={{
+                cursor: 'pointer',
                 borderRadius: 4,
                 boxShadow: 'none',
                 border: '1px solid #eee',
@@ -21,7 +32,8 @@ const ProductCard = ({ product }) => {
 
                 '&:hover': {
                     transform: 'translateY(-4px)',
-                    boxShadow: '0 12px 30px rgba(0,0,0,.08)',
+                    boxShadow:
+                        '0 12px 30px rgba(0,0,0,.08)',
                 },
             }}
         >
@@ -96,13 +108,21 @@ const ProductCard = ({ product }) => {
                     </Typography>
 
                     <Button
+                        variant="outlined"
                         size="small"
-                        sx={{
-                            minWidth: 0,
-                            borderRadius: 2,
-                        }}
+                        startIcon={
+                            <AddShoppingCartIcon />
+                        }
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            dispatch(
+                                addToCart(product.id)
+                            )
+                        }
+
+                        }
                     >
-                        <ShoppingBagOutlinedIcon />
+                        Add
                     </Button>
                 </Box>
 
@@ -115,8 +135,11 @@ const ProductCard = ({ product }) => {
                         borderRadius: 3,
                         textTransform: 'none',
                     }}
+                    onClick={(e) =>
+                        e.stopPropagation()
+                    }
                 >
-                    View Product    
+                    View Product
                 </Button>
             </Box>
         </Card>

@@ -4,7 +4,7 @@ export const theme = createTheme({
     palette: {
         mode: 'light',
         primary: {
-            main: '#530033',
+            main: '#410606',
         },
         secondary: {
             main: '#EC4899',
@@ -15,7 +15,7 @@ export const theme = createTheme({
         },
     },
     shape: {
-        borderRadius: 12,
+        borderRadius: 6 ,
     },
     typography: {
         fontFamily: 'Poppins, sans-serif',

@@ -106,4 +106,30 @@ const cartSlice = createSlice({
     },
 });
 
+export const updateQuantity = createAsyncThunk(
+    'cart/updateQuantity',
+    async ({ productId, quantity }, thunkAPI) => {
+        try {
+
+            await api.put(
+                '/cart/update',
+                {
+                    productId,
+                    quantity,
+                }
+            );
+
+            thunkAPI.dispatch(
+                getCart()
+            );
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
 export default cartSlice.reducer;

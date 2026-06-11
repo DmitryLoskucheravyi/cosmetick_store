@@ -118,7 +118,7 @@ public static function getCart()
         $productId = $data['productId'] ?? null;
         $quantity = $data['quantity'] ?? null;
 
-        if (!$productId || !$quantity) {
+        if ( !$productId || $quantity === null ) {
 
             ResponseHelper::error(
                 "Invalid data",
