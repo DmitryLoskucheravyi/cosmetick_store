@@ -41,6 +41,51 @@ export const createOrder = createAsyncThunk(
     }
 );
 
+export const getAllOrders = createAsyncThunk(
+    'orders/getAllOrders',
+    async (_, thunkAPI) => {
+        try {
+
+            const response = await api.get(
+                '/orders'
+            );
+
+            return response.data.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
+export const updateOrderStatus = createAsyncThunk(
+    'orders/updateOrderStatus',
+    async (data, thunkAPI) => {
+        try {
+
+            const response = await api.put(
+                '/orders/status',
+                data
+            );
+
+            thunkAPI.dispatch(
+                getAllOrders()
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
 
 const orderSlice = createSlice({
     name: 'orders',
@@ -78,7 +123,24 @@ const orderSlice = createSlice({
                     state.loading = false;
                     state.error = action.payload;
                 }
-            );
+            )
+
+            .addCase(getAllOrders.pending, (state) => {
+
+                state.loading = true;
+            })
+
+            .addCase(getAllOrders.fulfilled, (state, action) => {
+
+                state.loading = false;
+                state.orders = action.payload;
+            })
+
+            .addCase(getAllOrders.rejected, (state, action) => {
+
+                state.loading = false;
+                state.error = action.payload;
+            })
     },
 });
 

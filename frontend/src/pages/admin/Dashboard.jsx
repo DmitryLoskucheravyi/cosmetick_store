@@ -11,8 +11,28 @@ import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 
 import { Link } from 'react-router-dom';
 
-const Dashboard = () => {
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { getDashboard } from '../../redux/admin/adminSlice';
+
+const Dashboard = () => {
+    const dispatch = useDispatch();
+
+    const {
+        dashboard,
+        loading,
+    } = useSelector(
+        state => state.admin
+    );
+
+    useEffect(() => {
+
+        dispatch(
+            getDashboard()
+        );
+
+    }, [dispatch]);
     const cards = [
         {
             title: 'Products',
@@ -49,6 +69,107 @@ const Dashboard = () => {
                 Admin Dashboard
             </Typography>
 
+            <Grid
+                container
+                spacing={3}
+                sx={{ mb: 5 }}
+            >
+                <Grid size={{ xs: 12, md: 3 }}>
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            border: '1px solid #eee',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Typography
+                            color="text.secondary"
+                        >
+                            Products
+                        </Typography>
+
+                        <Typography
+                            variant="h4"
+                            fontWeight={700}
+                        >
+                            {dashboard?.products || 0}
+                        </Typography>
+                    </Paper>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 3 }}>
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            border: '1px solid #eee',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Typography
+                            color="text.secondary"
+                        >
+                            Orders
+                        </Typography>
+
+                        <Typography
+                            variant="h4"
+                            fontWeight={700}
+                        >
+                            {dashboard?.orders || 0}
+                        </Typography>
+                    </Paper>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 3 }}>
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            border: '1px solid #eee',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Typography
+                            color="text.secondary"
+                        >
+                            Users
+                        </Typography>
+
+                        <Typography
+                            variant="h4"
+                            fontWeight={700}
+                        >
+                            {dashboard?.users || 0}
+                        </Typography>
+                    </Paper>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 3 }}>
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            border: '1px solid #eee',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Typography
+                            color="text.secondary"
+                        >
+                            Revenue
+                        </Typography>
+
+                        <Typography
+                            variant="h4"
+                            fontWeight={700}
+                        >
+                            ${dashboard?.sales || 0}
+                        </Typography>
+                    </Paper>
+                </Grid>
+            </Grid>
             <Grid
                 container
                 spacing={3}

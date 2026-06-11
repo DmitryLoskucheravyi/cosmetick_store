@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     useDispatch,
@@ -23,9 +23,27 @@ import {
     deleteProduct,
 } from '../../redux/product/productSlice';
 
+import {
+    getCategories,
+} from '../../redux/category/categorySlice';
+
+import ProductFilters from './ProductFilters';
 const Products = () => {
 
-    const dispatch = useDispatch();
+
+    const [filters, setFilters] = useState({
+        search: '',
+        category: '',
+        minPrice: '',
+        maxPrice: '',
+        stock: '',
+        sort: 'newest',
+    });
+
+    const [appliedFilters, setAppliedFilters] =
+        useState(filters);
+
+    const dispatch = useDispatch()
 
     const {
         products,
@@ -34,13 +52,31 @@ const Products = () => {
         state => state.products
     );
 
+
+    const { categories } = useSelector(
+        state => state.categories
+    );
+
+
     useEffect(() => {
 
         dispatch(
-            getProducts()
+            getCategories()
         );
 
     }, [dispatch]);
+
+    useEffect(() => {
+
+        dispatch(
+            getProducts({
+                ...appliedFilters,
+                page: 1,
+                limit: 10,
+            })
+        );
+
+    }, [dispatch, appliedFilters]);
 
     const handleDelete = (id) => {
 
@@ -99,7 +135,15 @@ const Products = () => {
                 >
                     Create Product
                 </Button>
+
+
             </Box>
+            <ProductFilters
+                filters={filters}
+                setFilters={setFilters}
+                categories={categories}
+                setAppliedFilters={setAppliedFilters}
+            />
 
             <Stack spacing={2}>
 

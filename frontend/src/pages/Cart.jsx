@@ -9,6 +9,13 @@ import {
 } from '@mui/material';
 
 import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from '@mui/material';
+
+import {
     useDispatch,
     useSelector,
 } from 'react-redux';
@@ -26,6 +33,8 @@ import {
     useNavigate,
 } from 'react-router-dom';
 
+import { useState } from 'react';
+
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -38,13 +47,25 @@ const Cart = () => {
             sum + Number(item.total),
         0
     );
+
+    const [openCheckout, setOpenCheckout] =
+        useState(false);
     const handleCheckout = async () => {
+
         try {
+
             await dispatch(
                 createOrder()
             ).unwrap();
-            navigate('/orders');
+
+            setOpenCheckout(false);
+
+            navigate(
+                '/orders?success=true'
+            );
+
         } catch (error) {
+
             console.error(error);
         }
     };
@@ -52,7 +73,7 @@ const Cart = () => {
     if (!items.length) {
         return (
             <Box sx={{
-                textAlign:"center"
+                textAlign: "center"
             }} py={10}>
                 <Typography variant="h4">
                     Your cart is empty
@@ -269,7 +290,9 @@ const Cart = () => {
                             fullWidth
                             variant="contained"
                             size="large"
-                            onClick={handleCheckout}
+                            onClick={() =>
+                                setOpenCheckout(true)
+                            }
                             sx={{
                                 py: 1.5,
                                 borderRadius: 3,
@@ -282,6 +305,56 @@ const Cart = () => {
                     </Paper>
                 </Grid>
             </Grid>
+
+            <Dialog
+                open={openCheckout}
+                onClose={() =>
+                    setOpenCheckout(false)
+                }
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>
+                    Confirm Order
+                </DialogTitle>
+
+                <DialogContent>
+
+                    <Typography>
+                        You are about to place an order for:
+                    </Typography>
+
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            mt: 2,
+                            fontWeight: 700,
+                        }}
+                    >
+                        ${totalPrice.toFixed(2)}
+                    </Typography>
+
+                </DialogContent>
+
+                <DialogActions>
+
+                    <Button
+                        onClick={() =>
+                            setOpenCheckout(false)
+                        }
+                    >
+                        Cancel
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        onClick={handleCheckout}
+                    >
+                        Confirm Order
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

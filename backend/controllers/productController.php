@@ -9,45 +9,128 @@ class ProductController
 {
    public static function getProducts()
 {
-    $database = Database::connect();
+$database = Database::connect();
 
-    $search = $_GET['search'] ?? '';
+$search = trim($_GET['search'] ?? '');
+$category = $_GET['category'] ?? '';
+$minPrice = $_GET['minPrice'] ?? '';
+$maxPrice = $_GET['maxPrice'] ?? '';
+$stock = $_GET['stock'] ?? '';
+$sort = $_GET['sort'] ?? 'newest';
 
-    if ($search) {
+$page = max(1, (int)($_GET['page'] ?? 1));
+$limit = max(1, (int)($_GET['limit'] ?? 10));
 
-        $stmt = $database->prepare(
-            "SELECT
-                p.*,
-                c.name AS categoryName
-             FROM products p
-             INNER JOIN categories c
-                ON c.id = p.categoryId
-             WHERE p.title LIKE ?
-             ORDER BY p.createdAt DESC"
-        );
+$offset = ($page - 1) * $limit;
 
-        $stmt->execute(["%$search%"]);
+$sql = "
+    SELECT
+        p.*,
+        c.name AS categoryName
+    FROM products p
+    INNER JOIN categories c
+        ON c.id = p.categoryId
+    WHERE 1=1
+";
 
-    } else {
+$params = [];
 
-        $stmt = $database->query(
-            "SELECT
-                p.*,
-                c.name AS categoryName
-             FROM products p
-             INNER JOIN categories c
-                ON c.id = p.categoryId
-             ORDER BY p.createdAt DESC"
-        );
-    }
+if ($search) {
 
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    ResponseHelper::success(
-        $products,
-        "Products fetched"
-    );
+    $sql .= " AND p.title LIKE ?";
+    $params[] = "%{$search}%";
 }
+
+if ($category) {
+
+    $sql .= " AND p.categoryId = ?";
+    $params[] = $category;
+}
+
+if ($minPrice !== '') {
+
+    $sql .= " AND p.price >= ?";
+    $params[] = $minPrice;
+}
+
+if ($maxPrice !== '') {
+
+    $sql .= " AND p.price <= ?";
+    $params[] = $maxPrice;
+}
+
+if ($stock === 'in-stock') {
+
+    $sql .= " AND p.stock > 0";
+}
+
+if ($stock === 'out-of-stock') {
+
+    $sql .= " AND p.stock = 0";
+}
+
+if ($stock === 'low-stock') {
+
+    $sql .= " AND p.stock BETWEEN 1 AND 5";
+}
+
+$countSql = str_replace(
+    "SELECT
+        p.*,
+        c.name AS categoryName",
+    "SELECT COUNT(*)",
+    $sql
+);
+
+$countStmt = $database->prepare($countSql);
+$countStmt->execute($params);
+
+$total = $countStmt->fetchColumn();
+
+switch ($sort) {
+
+    case 'price-asc':
+        $sql .= " ORDER BY p.price ASC";
+        break;
+
+    case 'price-desc':
+        $sql .= " ORDER BY p.price DESC";
+        break;
+
+    case 'name-asc':
+        $sql .= " ORDER BY p.title ASC";
+        break;
+
+    case 'name-desc':
+        $sql .= " ORDER BY p.title DESC";
+        break;
+
+    default:
+        $sql .= " ORDER BY p.createdAt DESC";
+}
+
+$sql .= " LIMIT {$limit} OFFSET {$offset}";
+
+$stmt = $database->prepare($sql);
+$stmt->execute($params);
+
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+ResponseHelper::success(
+    [
+        "products" => $products,
+        "pagination" => [
+            "page" => $page,
+            "limit" => $limit,
+            "total" => (int)$total,
+            "pages" => ceil($total / $limit)
+        ]
+    ],
+    "Products fetched"
+);
+
+}
+
 
     public static function getProduct($id = null)
 {

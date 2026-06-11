@@ -3,13 +3,16 @@ import api from '../../api/axios';
 
 export const getProducts = createAsyncThunk(
     'products/getProducts',
-    async (_, thunkAPI) => {
+    async (params = {}, thunkAPI) => {
         try {
 
-            const response = await api.get('/products');
-
+            const response = await api.get(
+                '/products',
+                {
+                    params,
+                }
+            );
             return response.data.data;
-
         } catch (error) {
 
             return thunkAPI.rejectWithValue(
@@ -113,6 +116,7 @@ const productSlice = createSlice({
 
     initialState: {
         products: [],
+        pagination: null,
         loading: false,
         error: null,
     },
@@ -129,9 +133,11 @@ const productSlice = createSlice({
             })
 
             .addCase(getProducts.fulfilled, (state, action) => {
-
                 state.loading = false;
-                state.products = action.payload;
+                state.products =
+                    action.payload.products;
+                state.pagination =
+                    action.payload.pagination;
             })
 
             .addCase(getProducts.rejected, (state, action) => {
