@@ -20,6 +20,92 @@ export const getProducts = createAsyncThunk(
     }
 );
 
+export const createProduct = createAsyncThunk(
+    'products/createProduct',
+    async (formData, thunkAPI) => {
+        try {
+
+            const response = await api.post(
+                '/products/create',
+                formData,
+                {
+                    headers: {
+                        'Content-Type':
+                            'multipart/form-data',
+                    },
+                }
+            );
+
+            thunkAPI.dispatch(
+                getProducts()
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
+export const updateProduct = createAsyncThunk(
+    'products/updateProduct',
+    async (formData, thunkAPI) => {
+        try {
+
+            const response = await api.post(
+                '/products/update',
+                formData,
+                {
+                    headers: {
+                        'Content-Type':
+                            'multipart/form-data',
+                    },
+                }
+            );
+
+            thunkAPI.dispatch(
+                getProducts()
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
+export const deleteProduct = createAsyncThunk(
+    'products/deleteProduct',
+    async (id, thunkAPI) => {
+        try {
+
+            await api.delete(
+                `/products/delete?id=${id}`
+            );
+
+            thunkAPI.dispatch(
+                getProducts()
+            );
+
+            return id;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message
+            );
+        }
+    }
+);
+
 const productSlice = createSlice({
     name: 'products',
 
