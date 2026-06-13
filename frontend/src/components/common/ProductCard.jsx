@@ -42,14 +42,15 @@ const ProductCard = ({ product }) => {
                     component="img"
                     image={
                         product.image
-                            ? `http://localhost:5000${product.image}`
+                            ? `https://cosmetics.freepage.cc/api${product.image}`
                             : 'https://placehold.co/500x500'
+                            
                     }
-                    alt={product.title}
-                    sx={{
-                        height: 220,
-                        objectFit: 'contain',
-                    }}
+                alt={product.title}
+                sx={{
+                    height: 220,
+                    objectFit: 'contain',
+                }}
                 />
 
                 <Chip
