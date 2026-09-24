@@ -283,7 +283,7 @@ const UserOrders = () => {
                                                 <Avatar
                                                     src={
                                                         item.image
-                                                            ? `http://localhost:5000${item.image}`
+                                                            ? `/api${item.image}`
                                                             : ''
                                                     }
                                                     variant="rounded"

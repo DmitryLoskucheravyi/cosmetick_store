@@ -42,7 +42,7 @@ const ProductCard = ({ product }) => {
                     component="img"
                     image={
                         product.image
-                            ? `https://cosmetics.freepage.cc/api${product.image}`
+                            ? `/api${product.image}`
                             : 'https://placehold.co/500x500'
                             
                     }

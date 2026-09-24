@@ -25,7 +25,7 @@ export const addToCart = createAsyncThunk(
         try {
 
             await api.post(
-                '/cart/add',
+                '/cart',
                 {
                     productId,
                 }
@@ -52,7 +52,7 @@ export const removeFromCart = createAsyncThunk(
         try {
 
             await api.delete(
-                `/cart/remove?productId=${productId}`
+                `/cart/${productId}`
             );
 
             thunkAPI.dispatch(
@@ -112,9 +112,8 @@ export const updateQuantity = createAsyncThunk(
         try {
 
             await api.put(
-                '/cart/update',
+                `/cart/${productId}`,
                 {
-                    productId,
                     quantity,
                 }
             );

@@ -26,7 +26,7 @@ export const createCategory = createAsyncThunk(
         try {
 
             const response = await api.post(
-                '/categories/create',
+                '/categories',
                 { name }
             );
 
@@ -51,8 +51,8 @@ export const updateCategory = createAsyncThunk(
         try {
 
             const response = await api.put(
-                '/categories/update',
-                data
+                `/categories/${data.id}`,
+                { name: data.name }
             );
 
             thunkAPI.dispatch(
@@ -76,7 +76,7 @@ export const deleteCategory = createAsyncThunk(
         try {
 
             await api.delete(
-                `/categories/delete?id=${id}`
+                `/categories/${id}`
             );
 
             thunkAPI.dispatch(

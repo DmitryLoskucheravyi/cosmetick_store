@@ -62,7 +62,7 @@ const ProductDetails = () => {
                     <img
                         src={
                             product.image
-                                ? `https://cosmetics.freepage.cc/api${product.image}`
+                                ? `/api${product.image}`
                                 : 'https://placehold.co/600x400'
                         }
                         alt={product.title}

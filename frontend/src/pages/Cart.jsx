@@ -125,7 +125,7 @@ const Cart = () => {
                                         component="img"
                                         src={
                                             item.image
-                                                ? `https://cosmetics.freepage.cc/api${item.image}`
+                                                ? `/api${item.image}`
                                                 : 'https://placehold.co/120x120'
                                         }
                                         alt={item.title}

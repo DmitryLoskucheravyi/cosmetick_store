@@ -1,0 +1,12 @@
+# Fixes bug #1: even if a disallowed file ever ends up here, Apache
+# will never execute it as PHP.
+php_flag engine off
+
+<IfModule mod_php.c>
+    php_admin_flag engine off
+</IfModule>
+
+<FilesMatch "\.(php|phtml|php\d?)$">
+    Require all denied
+    Deny from all
+</FilesMatch>

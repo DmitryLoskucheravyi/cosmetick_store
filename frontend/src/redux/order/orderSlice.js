@@ -27,7 +27,7 @@ export const createOrder = createAsyncThunk(
         try {
 
             const response = await api.post(
-                '/orders/create'
+                '/orders'
             );
 
             return response.data.data;
@@ -67,8 +67,8 @@ export const updateOrderStatus = createAsyncThunk(
         try {
 
             const response = await api.put(
-                '/orders/status',
-                data
+                `/orders/${data.orderId}/status`,
+                { status: data.status }
             );
 
             thunkAPI.dispatch(
