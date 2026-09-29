@@ -25,6 +25,36 @@ export const getProducts = createAsyncThunk(
     }
 );
 
+// Deliberately separate from `getProducts`/`state.products`: Home and
+// Catalog rendering off the same array meant navigating Home -> Catalog
+// could commit a frame where Catalog briefly re-rendered Home's stale list
+// before its own reset-and-refetch effect ran — landing right inside the
+// View Transition's snapshot window and tripping a duplicate
+// view-transition-name (both pages reuse the same product ids/images).
+export const getHomeProducts = createAsyncThunk(
+    'products/getHomeProducts',
+    async (params = {}, thunkAPI) => {
+        try {
+
+            const response = await api.get(
+                '/products',
+                {
+                    params,
+                }
+            );
+
+            return response.data.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                'Failed to load products'
+            );
+        }
+    }
+);
+
 export const getRelatedProducts = createAsyncThunk(
     'products/getRelatedProducts',
     async ({ categoryId, excludeId }, thunkAPI) => {
@@ -164,6 +194,9 @@ const productSlice = createSlice({
         related: [],
         relatedLoading: false,
         priceRange: null,
+        homeProducts: [],
+        homeLoading: false,
+        homePagination: null,
     },
 
     reducers: {
@@ -240,6 +273,24 @@ const productSlice = createSlice({
                         action.payload;
                 }
             )
+
+            .addCase(getHomeProducts.pending, (state) => {
+
+                state.homeLoading = true;
+            })
+
+            .addCase(getHomeProducts.fulfilled, (state, action) => {
+
+                state.homeLoading = false;
+                state.homeProducts = action.payload.products;
+                state.homePagination = action.payload.pagination;
+            })
+
+            .addCase(getHomeProducts.rejected, (state, action) => {
+
+                state.homeLoading = false;
+                state.error = action.payload;
+            })
 
             .addCase(getRelatedProducts.pending, (state) => {
 

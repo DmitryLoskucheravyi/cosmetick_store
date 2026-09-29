@@ -24,7 +24,7 @@ import RotatingWord from '../motion/RotatingWord';
 import Marquee from '../motion/Marquee';
 import ScrollRail from '../motion/ScrollRail';
 
-import { getProducts } from '../redux/product/productSlice';
+import { getHomeProducts } from '../redux/product/productSlice';
 import { getCategories } from '../redux/category/categorySlice';
 
 const STEPS = [
@@ -58,19 +58,18 @@ const collageLayout = [
 
 const Home = () => {
     const dispatch = useDispatch();
-    const { products, pagination } = useSelector((state) => state.products);
+    const { homeProducts: products, homePagination: pagination } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.categories);
 
     useEffect(() => {
         if (!products.length) {
-            dispatch(getProducts({ limit: 20 }));
+            dispatch(getHomeProducts({ limit: 20 }));
         }
         if (!categories.length) {
             dispatch(getCategories());
         }
     }, [dispatch, products.length, categories.length]);
 
-    const featuredProducts = products.slice(0, 6);
     const collageProducts = products.slice(0, 3);
     const totalProducts = pagination?.total ?? products.length;
 
@@ -83,6 +82,15 @@ const Home = () => {
                 .slice(0, 6),
         [products]
     );
+
+    // Kept mutually exclusive from bestsellers: ProductCard gives each image
+    // a page-unique view-transition-name, so the same product rendered in
+    // both sections at once would violate that uniqueness and abort the
+    // transition (browser throws "duplicate view-transition-name").
+    const featuredProducts = useMemo(() => {
+        const bestsellerIds = new Set(bestsellers.map((product) => product.id));
+        return products.filter((product) => !bestsellerIds.has(product.id)).slice(0, 6);
+    }, [products, bestsellers]);
 
     return (
         <>
