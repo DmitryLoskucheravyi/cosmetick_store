@@ -44,7 +44,9 @@ final class Bootstrap
 {
     public static function createKernel(string $backendRoot): Kernel
     {
-        Dotenv::createImmutable($backendRoot)->load();
+        // safeLoad (not load): on hosts like Render, env vars are injected
+        // directly by the platform and no .env file is shipped in the image.
+        Dotenv::createImmutable($backendRoot)->safeLoad();
 
         self::sendCorsHeaders();
 
