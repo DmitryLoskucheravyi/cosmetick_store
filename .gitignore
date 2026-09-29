@@ -1,4 +1,11 @@
 # >>> Skill Installer for Claude Code (managed) >>>
 /.claude/skills/.skill-sources.json
+/.claude/skills/composition-patterns/
+/.claude/skills/frontend-design/
 /.claude/skills/graphify/
+/.claude/skills/react-best-practices/
+/.claude/skills/react-view-transitions/
+/.claude/skills/theme-factory/
+/.claude/skills/web-design-guidelines/
+/.claude/skills/webapp-testing/
 # <<< Skill Installer for Claude Code <<<
