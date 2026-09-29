@@ -11,7 +11,7 @@ export const loadUser = createAsyncThunk(
 
             return response.data.data;
 
-        } catch (error) {
+        } catch {
 
             localStorage.removeItem('token');
 

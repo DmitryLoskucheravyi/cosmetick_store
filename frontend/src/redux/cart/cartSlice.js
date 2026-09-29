@@ -90,8 +90,6 @@ const cartSlice = createSlice({
 
             .addCase(getCart.fulfilled, (state, action) => {
 
-                console.log('CART PAYLOAD:', action.payload);
-
                 state.loading = false;
                 state.items = action.payload;
             })

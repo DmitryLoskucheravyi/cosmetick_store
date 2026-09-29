@@ -28,6 +28,7 @@ import {
 } from '../../redux/category/categorySlice';
 
 import ProductFilters from './ProductFilters';
+import PriceTag from '../../components/common/PriceTag';
 const Products = () => {
 
 
@@ -151,11 +152,10 @@ const Products = () => {
 
                     <Paper
                         key={product.id}
-                        elevation={0}
+                        variant="outlined"
                         sx={{
-                            p: 3,
-                            border: '1px solid #eee',
-                            borderRadius: 4,
+                            p: 2,
+                            borderRadius: '16px',
                         }}
                     >
                         <Box
@@ -174,13 +174,11 @@ const Products = () => {
                                     {product.title}
                                 </Typography>
 
-                                <Typography
-                                    color="text.secondary"
-                                >
-                                    
-                                    {product.price}
-                                    UAH
-                                </Typography>
+                                <PriceTag
+                                    value={product.price}
+                                    variant="body2"
+                                    sx={{ fontWeight: 400, color: 'text.secondary' }}
+                                />
 
                             </Box>
 

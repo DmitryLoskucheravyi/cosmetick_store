@@ -23,11 +23,12 @@ export const getMyOrders = createAsyncThunk(
 
 export const createOrder = createAsyncThunk(
     'orders/createOrder',
-    async (_, thunkAPI) => {
+    async (payload, thunkAPI) => {
         try {
 
             const response = await api.post(
-                '/orders'
+                '/orders',
+                payload
             );
 
             return response.data.data;
@@ -36,6 +37,28 @@ export const createOrder = createAsyncThunk(
 
             return thunkAPI.rejectWithValue(
                 error.response?.data?.message
+            );
+        }
+    }
+);
+
+export const applyPromoCode = createAsyncThunk(
+    'orders/applyPromoCode',
+    async ({ code, subtotal }, thunkAPI) => {
+        try {
+
+            const response = await api.post(
+                '/promo/validate',
+                { code, subtotal }
+            );
+
+            return response.data.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                'Invalid promo code'
             );
         }
     }
@@ -115,11 +138,27 @@ const orderSlice = createSlice({
         selectedOrder: null,
         loading: false,
         error: null,
+        promo: {
+            code: null,
+            percent: 0,
+            discount: 0,
+            applying: false,
+            error: null,
+        },
     },
 
     reducers: {
         clearSelectedOrder: (state) => {
             state.selectedOrder = null;
+        },
+        clearPromo: (state) => {
+            state.promo = {
+                code: null,
+                percent: 0,
+                discount: 0,
+                applying: false,
+                error: null,
+            };
         },
     },
 
@@ -193,6 +232,30 @@ const orderSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+
+            .addCase(applyPromoCode.pending, (state) => {
+
+                state.promo.applying = true;
+                state.promo.error = null;
+            })
+
+            .addCase(applyPromoCode.fulfilled, (state, action) => {
+
+                state.promo.applying = false;
+                state.promo.code = action.payload.code;
+                state.promo.percent = action.payload.percent;
+                state.promo.discount = action.payload.discount;
+                state.promo.error = null;
+            })
+
+            .addCase(applyPromoCode.rejected, (state, action) => {
+
+                state.promo.applying = false;
+                state.promo.code = null;
+                state.promo.percent = 0;
+                state.promo.discount = 0;
+                state.promo.error = action.payload;
+            })
     },
 });
 
@@ -200,4 +263,5 @@ export default orderSlice.reducer;
 
 export const {
     clearSelectedOrder,
+    clearPromo,
 } = orderSlice.actions;

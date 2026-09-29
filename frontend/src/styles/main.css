@@ -1,0 +1,145 @@
+:root {
+    color-scheme: light;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+/* Visible keyboard focus everywhere, on top of MUI's own focus rings */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid #d6447d;
+    outline-offset: 2px;
+}
+
+/* Screen-reader-only text (e.g. the static alternative to RotatingWord) */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Blinking text-cursor caret used by RotatingWord */
+@keyframes caret-blink {
+
+    0%,
+    45% {
+        opacity: 1;
+    }
+
+    50%,
+    95% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.caret {
+    display: inline-block;
+    width: 2px;
+    margin-left: 2px;
+    height: 0.9em;
+    vertical-align: -0.1em;
+    background: currentColor;
+    animation: caret-blink 1.1s steps(1) infinite;
+}
+
+/* Infinite marquee strip — duplicated content, paused on hover/focus */
+@keyframes marquee-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation-name: marquee-scroll;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+}
+
+/* Ambient "breathing" glow behind hero/CTA content */
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+.breathing-glow {
+    animation: breathe 6s ease-in-out infinite;
+}
+
+/* Native View Transition (route change) cross-fade + slight rise.
+   Guarded by prefers-reduced-motion below and feature-detected in JS. */
+::view-transition-old(root) {
+    animation: page-out 0.22s ease both;
+}
+
+::view-transition-new(root) {
+    animation: page-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes page-out {
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .caret,
+    .marquee-track,
+    .breathing-glow,
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.001ms !important;
+        animation-duration: 0.001ms !important;
+    }
+}

@@ -111,13 +111,12 @@ const CreateProduct = () => {
 
     return (
         <Paper
-            elevation={0}
+            variant="outlined"
             sx={{
                 maxWidth: 700,
                 mx: 'auto',
-                p: 4,
-                border: '1px solid #eee',
-                borderRadius: 4,
+                p: 3,
+                borderRadius: '16px',
             }}
         >
             <Typography

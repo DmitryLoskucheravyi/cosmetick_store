@@ -7,6 +7,8 @@ import cartReducer from '../redux/cart/cartSlice';
 import orderReducer from '../redux/order/orderSlice';
 import categoryReducer from '../redux/category/categorySlice';
 import adminReducer from '../redux/admin/adminSlice';
+import reviewReducer from '../redux/review/reviewSlice';
+import wishlistReducer from '../redux/wishlist/wishlistSlice';
 
 
 
@@ -20,5 +22,7 @@ export const store = configureStore({
         orders: orderReducer,
         categories: categoryReducer,
         admin: adminReducer,
+        reviews: reviewReducer,
+        wishlist: wishlistReducer,
     },
 });

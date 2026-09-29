@@ -25,6 +25,56 @@ export const getProducts = createAsyncThunk(
     }
 );
 
+export const getRelatedProducts = createAsyncThunk(
+    'products/getRelatedProducts',
+    async ({ categoryId, excludeId }, thunkAPI) => {
+        try {
+
+            const response = await api.get(
+                '/products',
+                {
+                    params: {
+                        category: categoryId,
+                        limit: 8,
+                    },
+                }
+            );
+
+            return response.data.data.products
+                .filter((product) => String(product.id) !== String(excludeId))
+                .slice(0, 6);
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                'Failed to load related products'
+            );
+        }
+    }
+);
+
+export const getPriceRange = createAsyncThunk(
+    'products/getPriceRange',
+    async (_, thunkAPI) => {
+        try {
+
+            const response = await api.get(
+                '/products/price-range'
+            );
+
+            return response.data.data;
+
+        } catch (error) {
+
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                'Failed to load price range'
+            );
+        }
+    }
+);
+
 export const createProduct = createAsyncThunk(
     'products/createProduct',
     async (formData, thunkAPI) => {
@@ -111,6 +161,9 @@ const productSlice = createSlice({
         loadingMore: false,
         hasMore: true,
         error: null,
+        related: [],
+        relatedLoading: false,
+        priceRange: null,
     },
 
     reducers: {
@@ -186,7 +239,29 @@ const productSlice = createSlice({
                     state.error =
                         action.payload;
                 }
-            );
+            )
+
+            .addCase(getRelatedProducts.pending, (state) => {
+
+                state.relatedLoading = true;
+            })
+
+            .addCase(getRelatedProducts.fulfilled, (state, action) => {
+
+                state.relatedLoading = false;
+                state.related = action.payload;
+            })
+
+            .addCase(getRelatedProducts.rejected, (state, action) => {
+
+                state.relatedLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(getPriceRange.fulfilled, (state, action) => {
+
+                state.priceRange = action.payload;
+            });
     },
 });
 

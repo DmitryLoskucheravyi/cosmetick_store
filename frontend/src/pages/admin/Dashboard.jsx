@@ -3,6 +3,7 @@ import {
     Typography,
     Paper,
     Grid,
+    CircularProgress,
 } from '@mui/material';
 
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
@@ -57,6 +58,14 @@ const Dashboard = () => {
         },
     ];
 
+    if (loading && !dashboard) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <>
             <Typography
@@ -76,11 +85,10 @@ const Dashboard = () => {
             >
                 <Grid size={{ xs: 12, md: 3 }}>
                     <Paper
-                        elevation={0}
+                        variant="outlined"
                         sx={{
-                            p: 3,
-                            border: '1px solid #eee',
-                            borderRadius: 4,
+                            p: 2,
+                            borderRadius: '16px',
                         }}
                     >
                         <Typography
@@ -100,11 +108,10 @@ const Dashboard = () => {
 
                 <Grid size={{ xs: 12, md: 3 }}>
                     <Paper
-                        elevation={0}
+                        variant="outlined"
                         sx={{
-                            p: 3,
-                            border: '1px solid #eee',
-                            borderRadius: 4,
+                            p: 2,
+                            borderRadius: '16px',
                         }}
                     >
                         <Typography
@@ -124,11 +131,10 @@ const Dashboard = () => {
 
                 <Grid size={{ xs: 12, md: 3 }}>
                     <Paper
-                        elevation={0}
+                        variant="outlined"
                         sx={{
-                            p: 3,
-                            border: '1px solid #eee',
-                            borderRadius: 4,
+                            p: 2,
+                            borderRadius: '16px',
                         }}
                     >
                         <Typography
@@ -148,11 +154,10 @@ const Dashboard = () => {
 
                 <Grid size={{ xs: 12, md: 3 }}>
                     <Paper
-                        elevation={0}
+                        variant="outlined"
                         sx={{
-                            p: 3,
-                            border: '1px solid #eee',
-                            borderRadius: 4,
+                            p: 2,
+                            borderRadius: '16px',
                         }}
                     >
                         <Typography
@@ -186,11 +191,10 @@ const Dashboard = () => {
                         <Paper
                             component={Link}
                             to={card.link}
-                            elevation={0}
+                            variant="outlined"
                             sx={{
-                                p: 4,
-                                border: '1px solid #eee',
-                                borderRadius: 4,
+                                p: 3,
+                                borderRadius: '16px',
                                 textDecoration: 'none',
                                 color: 'inherit',
                                 display: 'block',

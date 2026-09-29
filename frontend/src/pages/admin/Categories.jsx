@@ -133,20 +133,15 @@ const Categories = () => {
                     onClick={() =>
                         setOpenCreate(true)
                     }
-                    sx={{
-                        borderRadius: 3,
-                        textTransform: 'none',
-                    }}
                 >
                     Add Category
                 </Button>
             </Box>
 
             <Paper
-                elevation={0}
+                variant="outlined"
                 sx={{
-                    border: '1px solid #eee',
-                    borderRadius: 4,
+                    borderRadius: '16px',
                     overflow: 'hidden',
                 }}
             >
@@ -186,9 +181,6 @@ const Categories = () => {
                                                 label={
                                                     category.name
                                                 }
-                                                sx={{
-                                                    borderRadius: 2,
-                                                }}
                                             />
 
                                         </TableCell>

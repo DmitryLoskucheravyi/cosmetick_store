@@ -50,14 +50,11 @@ const ProductFilters = ({
 
     return (
         <Paper
-            elevation={0}
+            variant="outlined"
             sx={{
-                p: 4,
-                mb: 4,
-                borderRadius: 5,
-                border: '1px solid #ececec',
-                boxShadow:
-                    '0 4px 20px rgba(0,0,0,.03)',
+                p: 3,
+                mb: 3,
+                borderRadius: '16px',
             }}
         >
             <Box
@@ -91,7 +88,7 @@ const ProductFilters = ({
                         name="search"
                         value={filters.search}
                         onChange={handleChange}
-                        inputprops={{
+                        InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <SearchIcon />
@@ -109,7 +106,7 @@ const ProductFilters = ({
                         name="category"
                         value={filters.category}
                         onChange={handleChange}
-                        inputprops={{
+                        InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <CategoryOutlinedIcon />
@@ -162,7 +159,7 @@ const ProductFilters = ({
                         name="stock"
                         value={filters.stock}
                         onChange={handleChange}
-                        inputprops={{
+                        InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <Inventory2OutlinedIcon />
@@ -196,7 +193,7 @@ const ProductFilters = ({
                         name="sort"
                         value={filters.sort}
                         onChange={handleChange}
-                        inputprops={{
+                        InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <SortOutlinedIcon />
@@ -242,13 +239,6 @@ const ProductFilters = ({
                             onClick={() =>
                                 setAppliedFilters(filters)
                             }
-                            sx={{
-                                borderRadius: 3,
-                                px: 4,
-                                py: 1.2,
-                                textTransform: 'none',
-                                fontWeight: 600,
-                            }}
                         >
                             Apply Filters
                         </Button>
@@ -256,11 +246,6 @@ const ProductFilters = ({
                         <Button
                             variant="outlined"
                             onClick={resetFilters}
-                            sx={{
-                                borderRadius: 3,
-                                px: 4,
-                                textTransform: 'none',
-                            }}
                         >
                             Reset
                         </Button>

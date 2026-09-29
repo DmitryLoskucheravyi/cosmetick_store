@@ -14,6 +14,7 @@ import { store } from './app/store';
 import { theme } from './theme/theme';
 
 import 'react-toastify/dist/ReactToastify.css';
+import './styles/main.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>

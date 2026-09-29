@@ -20,8 +20,10 @@ import {
     TableBody,
     TextField,
     MenuItem,
-    Chip,
 } from '@mui/material';
+
+import StatusBadge from '../../components/common/StatusBadge';
+import PriceTag from '../../components/common/PriceTag';
 
 const Orders = () => {
 
@@ -39,27 +41,6 @@ const Orders = () => {
 
     }, [dispatch]);
 
-    const getStatusColor = (status) => {
-
-        switch (status) {
-
-            case 'pending':
-                return 'warning';
-
-            case 'processing':
-                return 'info';
-
-            case 'delivered':
-                return 'success';
-
-            case 'cancelled':
-                return 'error';
-
-            default:
-                return 'default';
-        }
-    };
-
     return (
         <>
             <Typography
@@ -73,10 +54,9 @@ const Orders = () => {
             </Typography>
 
             <Paper
-                elevation={0}
+                variant="outlined"
                 sx={{
-                    border: '1px solid #eee',
-                    borderRadius: 4,
+                    borderRadius: '16px',
                     overflow: 'hidden',
                 }}
             >
@@ -130,18 +110,11 @@ const Orders = () => {
                                 </TableCell>
 
                                 <TableCell>
-                                    {order.totalPrice} UAH
+                                    <PriceTag value={order.totalPrice} variant="body1" />
                                 </TableCell>
 
                                 <TableCell>
-                                    <Chip
-                                        label={order.status}
-                                        color={
-                                            getStatusColor(
-                                                order.status
-                                            )
-                                        }
-                                    />
+                                    <StatusBadge status={order.status} />
                                 </TableCell>
 
                                 <TableCell>

@@ -5,6 +5,7 @@ import {
 
 import Header from './Header';
 import Footer from './Footer';
+import ScrollProgressBar from '../../motion/ScrollProgressBar';
 
 const Layout = ({ children }) => {
     return (
@@ -13,9 +14,10 @@ const Layout = ({ children }) => {
                 minHeight: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
-                bgcolor: '#fafafa',
+                bgcolor: 'background.default',
             }}
         >
+            <ScrollProgressBar />
             <Header />
 
             <Container
