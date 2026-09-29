@@ -37,6 +37,11 @@ final class ProductController
         return Response::success($result, 'Products fetched');
     }
 
+    public function priceRange(Request $request): Response
+    {
+        return Response::success($this->products->priceRange(), 'Price range fetched');
+    }
+
     public function show(Request $request, array $params): Response
     {
         return Response::success($this->products->find((int) $params['id']), 'Product fetched');

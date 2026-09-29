@@ -18,6 +18,15 @@ final class Order
         public readonly array $items = [],
         public readonly ?string $customerName = null,
         public readonly ?string $customerEmail = null,
+        public readonly ?string $shippingName = null,
+        public readonly ?string $shippingPhone = null,
+        public readonly ?string $shippingCity = null,
+        public readonly ?string $shippingMethod = null,
+        public readonly ?string $shippingAddress = null,
+        public readonly ?string $paymentMethod = null,
+        public readonly ?string $promoCode = null,
+        public readonly float $discount = 0.0,
+        public readonly float $shippingCost = 0.0,
     ) {
     }
 
@@ -31,6 +40,15 @@ final class Order
             createdAt: $row['createdAt'] ?? null,
             customerName: $row['name'] ?? null,
             customerEmail: $row['email'] ?? null,
+            shippingName: $row['shippingName'] ?? null,
+            shippingPhone: $row['shippingPhone'] ?? null,
+            shippingCity: $row['shippingCity'] ?? null,
+            shippingMethod: $row['shippingMethod'] ?? null,
+            shippingAddress: $row['shippingAddress'] ?? null,
+            paymentMethod: $row['paymentMethod'] ?? null,
+            promoCode: $row['promoCode'] ?? null,
+            discount: isset($row['discount']) ? (float) $row['discount'] : 0.0,
+            shippingCost: isset($row['shippingCost']) ? (float) $row['shippingCost'] : 0.0,
         );
     }
 
@@ -44,6 +62,16 @@ final class Order
             'createdAt' => $this->createdAt,
             'name' => $this->customerName,
             'email' => $this->customerEmail,
+            'shippingName' => $this->shippingName,
+            'shippingPhone' => $this->shippingPhone,
+            'shippingCity' => $this->shippingCity,
+            'shippingMethod' => $this->shippingMethod,
+            'shippingAddress' => $this->shippingAddress,
+            'paymentMethod' => $this->paymentMethod,
+            'promoCode' => $this->promoCode,
+            'discount' => $this->discount,
+            'shippingCost' => $this->shippingCost,
+            'subtotal' => round($this->totalPrice - $this->shippingCost + $this->discount, 2),
             'items' => array_map(
                 static fn (OrderItem $item) => $item->toArray(),
                 $this->items

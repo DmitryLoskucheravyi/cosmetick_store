@@ -10,7 +10,8 @@ use Vt241\Backend\Enums\OrderStatus;
 
 interface OrderRepositoryInterface
 {
-    public function create(int $userId, float $totalPrice): int;
+    /** @param array{name: string, phone: string, city: string, method: string, address: string, paymentMethod: string, promoCode: ?string, discount: float, shippingCost: float} $shipping */
+    public function create(int $userId, float $totalPrice, array $shipping): int;
 
     public function addItem(int $orderId, int $productId, int $quantity, float $price): void;
 

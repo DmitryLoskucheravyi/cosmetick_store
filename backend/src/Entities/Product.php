@@ -16,6 +16,10 @@ final class Product
         public readonly int $stock,
         public readonly ?string $createdAt = null,
         public readonly ?string $categoryName = null,
+        public readonly array $images = [],
+        public readonly array $specs = [],
+        public readonly float $avgRating = 0.0,
+        public readonly int $reviewCount = 0,
     ) {
     }
 
@@ -31,6 +35,10 @@ final class Product
             stock: (int) $row['stock'],
             createdAt: $row['createdAt'] ?? null,
             categoryName: $row['categoryName'] ?? null,
+            images: self::decodeJsonArray($row['images'] ?? null),
+            specs: self::decodeJsonArray($row['specs'] ?? null),
+            avgRating: isset($row['avgRating']) ? round((float) $row['avgRating'], 1) : 0.0,
+            reviewCount: isset($row['reviewCount']) ? (int) $row['reviewCount'] : 0,
         );
     }
 
@@ -46,6 +54,21 @@ final class Product
             'stock' => $this->stock,
             'createdAt' => $this->createdAt,
             'categoryName' => $this->categoryName,
+            'images' => $this->images !== [] ? $this->images : array_filter([$this->image]),
+            'specs' => $this->specs,
+            'avgRating' => $this->avgRating,
+            'reviewCount' => $this->reviewCount,
         ];
+    }
+
+    private static function decodeJsonArray(?string $json): array
+    {
+        if ($json === null || $json === '') {
+            return [];
+        }
+
+        $decoded = json_decode($json, true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 }

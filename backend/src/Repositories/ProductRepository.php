@@ -27,9 +27,16 @@ final class ProductRepository implements ProductRepositoryInterface
         $orderBy = $this->orderByClause((string) ($filters['sort'] ?? 'newest'));
 
         $stmt = $this->database->pdo()->prepare(
-            "SELECT p.*, c.name AS categoryName
+            "SELECT p.*, c.name AS categoryName,
+                    COALESCE(r.avgRating, 0) AS avgRating,
+                    COALESCE(r.reviewCount, 0) AS reviewCount
              FROM products p
              INNER JOIN categories c ON c.id = p.categoryId
+             LEFT JOIN (
+                 SELECT productId, AVG(rating) AS avgRating, COUNT(*) AS reviewCount
+                 FROM reviews
+                 GROUP BY productId
+             ) r ON r.productId = p.id
              {$where}
              {$orderBy}
              LIMIT :limit OFFSET :offset"
@@ -54,9 +61,16 @@ final class ProductRepository implements ProductRepositoryInterface
     public function findById(int $id): ?Product
     {
         $stmt = $this->database->pdo()->prepare(
-            'SELECT p.*, c.name AS categoryName
+            'SELECT p.*, c.name AS categoryName,
+                    COALESCE(r.avgRating, 0) AS avgRating,
+                    COALESCE(r.reviewCount, 0) AS reviewCount
              FROM products p
              INNER JOIN categories c ON c.id = p.categoryId
+             LEFT JOIN (
+                 SELECT productId, AVG(rating) AS avgRating, COUNT(*) AS reviewCount
+                 FROM reviews
+                 GROUP BY productId
+             ) r ON r.productId = p.id
              WHERE p.id = ? AND p.isActive = 1'
         );
         $stmt->execute([$id]);
@@ -130,6 +144,15 @@ final class ProductRepository implements ProductRepositoryInterface
         return (int) $this->database->pdo()
             ->query('SELECT COUNT(*) FROM products WHERE isActive = 1')
             ->fetchColumn();
+    }
+
+    public function priceRange(): array
+    {
+        $row = $this->database->pdo()
+            ->query('SELECT COALESCE(MIN(price), 0) AS min, COALESCE(MAX(price), 0) AS max FROM products WHERE isActive = 1')
+            ->fetch();
+
+        return ['min' => (float) $row['min'], 'max' => (float) $row['max']];
     }
 
     /** @return array{0: string, 1: array<string, mixed>} */

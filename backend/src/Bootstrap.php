@@ -15,12 +15,15 @@ use Vt241\Backend\Http\Controllers\CartController;
 use Vt241\Backend\Http\Controllers\CategoryController;
 use Vt241\Backend\Http\Controllers\OrderController;
 use Vt241\Backend\Http\Controllers\ProductController;
+use Vt241\Backend\Http\Controllers\PromoController;
+use Vt241\Backend\Http\Controllers\ReviewController;
 use Vt241\Backend\Http\Middleware\AdminMiddleware;
 use Vt241\Backend\Http\Middleware\AuthMiddleware;
 use Vt241\Backend\Repositories\CartRepository;
 use Vt241\Backend\Repositories\CategoryRepository;
 use Vt241\Backend\Repositories\OrderRepository;
 use Vt241\Backend\Repositories\ProductRepository;
+use Vt241\Backend\Repositories\ReviewRepository;
 use Vt241\Backend\Repositories\UserRepository;
 use Vt241\Backend\Services\AuthService;
 use Vt241\Backend\Services\CartService;
@@ -29,6 +32,8 @@ use Vt241\Backend\Services\ImageUploader;
 use Vt241\Backend\Services\JwtService;
 use Vt241\Backend\Services\OrderService;
 use Vt241\Backend\Services\ProductService;
+use Vt241\Backend\Services\PromoService;
+use Vt241\Backend\Services\ReviewService;
 
 /**
  * Composition root: loads config, wires every dependency through
@@ -56,6 +61,7 @@ final class Bootstrap
         $categories = new CategoryRepository($database);
         $cart = new CartRepository($database);
         $orders = new OrderRepository($database);
+        $reviews = new ReviewRepository($database);
 
         $jwt = new JwtService((string) $_ENV['JWT_SECRET']);
         $uploader = new ImageUploader($backendRoot);
@@ -70,12 +76,15 @@ final class Bootstrap
         );
         $categoryController = new CategoryController(new CategoryService($categories), $adminMiddleware);
         $cartController = new CartController(new CartService($cart, $products), $authMiddleware);
+        $promoService = new PromoService();
         $orderController = new OrderController(
-            new OrderService($database, $orders, $cart, $products),
+            new OrderService($database, $orders, $cart, $products, $promoService),
             $authMiddleware,
             $adminMiddleware
         );
         $adminController = new AdminController($adminMiddleware, $products, $categories, $users, $orders);
+        $reviewController = new ReviewController(new ReviewService($reviews, $products), $authMiddleware);
+        $promoController = new PromoController($promoService);
 
         return new Kernel(self::buildRouter(
             $authController,
@@ -83,7 +92,9 @@ final class Bootstrap
             $categoryController,
             $cartController,
             $orderController,
-            $adminController
+            $adminController,
+            $reviewController,
+            $promoController
         ));
     }
 
@@ -93,7 +104,9 @@ final class Bootstrap
         CategoryController $categories,
         CartController $cart,
         OrderController $orders,
-        AdminController $admin
+        AdminController $admin,
+        ReviewController $reviews,
+        PromoController $promo
     ): Router {
         $router = new Router();
 
@@ -105,6 +118,9 @@ final class Bootstrap
 
         $router->add('GET', '/api/products', fn ($req) => $products->index($req));
         $router->add('POST', '/api/products', fn ($req) => $products->store($req));
+        // Registered before {id}: the router matches routes in registration
+        // order and {id} would otherwise swallow "price-range" as its param.
+        $router->add('GET', '/api/products/price-range', fn ($req) => $products->priceRange($req));
         $router->add('GET', '/api/products/{id}', fn ($req, $p) => $products->show($req, $p));
         // POST (not PUT) on purpose: PHP's built-in server only populates
         // $_POST/$_FILES for multipart bodies on POST requests.
@@ -129,6 +145,11 @@ final class Bootstrap
         $router->add('GET', '/api/orders/{id}', fn ($req, $p) => $orders->show($req, $p));
 
         $router->add('GET', '/api/admin/dashboard', fn ($req) => $admin->dashboard($req));
+
+        $router->add('GET', '/api/products/{id}/reviews', fn ($req, $p) => $reviews->index($req, $p));
+        $router->add('POST', '/api/products/{id}/reviews', fn ($req, $p) => $reviews->store($req, $p));
+
+        $router->add('POST', '/api/promo/validate', fn ($req) => $promo->validate($req));
 
         return $router;
     }

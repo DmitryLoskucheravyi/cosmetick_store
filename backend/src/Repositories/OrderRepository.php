@@ -16,12 +16,26 @@ final class OrderRepository implements OrderRepositoryInterface
     {
     }
 
-    public function create(int $userId, float $totalPrice): int
+    public function create(int $userId, float $totalPrice, array $shipping): int
     {
         $stmt = $this->database->pdo()->prepare(
-            'INSERT INTO orders (userId, totalPrice) VALUES (?, ?)'
+            'INSERT INTO orders
+                (userId, totalPrice, shippingName, shippingPhone, shippingCity, shippingMethod, shippingAddress, paymentMethod, promoCode, discount, shippingCost)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
-        $stmt->execute([$userId, $totalPrice]);
+        $stmt->execute([
+            $userId,
+            $totalPrice,
+            $shipping['name'],
+            $shipping['phone'],
+            $shipping['city'],
+            $shipping['method'],
+            $shipping['address'],
+            $shipping['paymentMethod'],
+            $shipping['promoCode'],
+            $shipping['discount'],
+            $shipping['shippingCost'],
+        ]);
 
         return (int) $this->database->pdo()->lastInsertId();
     }

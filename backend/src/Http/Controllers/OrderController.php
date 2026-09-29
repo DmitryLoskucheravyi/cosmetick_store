@@ -22,8 +22,17 @@ final class OrderController
     public function store(Request $request): Response
     {
         $user = $this->authMiddleware->authenticate($request);
+        $body = $request->json();
 
-        $orderId = $this->orders->checkout($user->id);
+        $orderId = $this->orders->checkout($user->id, [
+            'shippingName' => (string) ($body['shippingName'] ?? ''),
+            'shippingPhone' => (string) ($body['shippingPhone'] ?? ''),
+            'shippingCity' => (string) ($body['shippingCity'] ?? ''),
+            'shippingMethod' => (string) ($body['shippingMethod'] ?? ''),
+            'shippingAddress' => (string) ($body['shippingAddress'] ?? ''),
+            'paymentMethod' => (string) ($body['paymentMethod'] ?? ''),
+            'promoCode' => $body['promoCode'] ?? null,
+        ]);
 
         return Response::success(['orderId' => $orderId], 'Order created');
     }

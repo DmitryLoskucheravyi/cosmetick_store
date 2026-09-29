@@ -16,11 +16,17 @@ use Vt241\Backend\Repositories\ProductRepositoryInterface;
 
 final class OrderService
 {
+    private const FREE_SHIPPING_THRESHOLD = 1000.0;
+    private const FLAT_SHIPPING_COST = 60.0;
+    private const SHIPPING_METHODS = ['nova_poshta', 'ukrposhta', 'courier'];
+    private const PAYMENT_METHODS = ['cod', 'card'];
+
     public function __construct(
         private readonly Database $database,
         private readonly OrderRepositoryInterface $orders,
         private readonly CartRepositoryInterface $cart,
-        private readonly ProductRepositoryInterface $products
+        private readonly ProductRepositoryInterface $products,
+        private readonly PromoService $promo
     ) {
     }
 
@@ -28,9 +34,13 @@ final class OrderService
      * Fixes bug #2: the whole checkout now runs in one transaction and
      * stock is reserved with an atomic "stock >= quantity" update, so two
      * simultaneous orders can no longer oversell the same product.
+     *
+     * @param array{shippingName: string, shippingPhone: string, shippingCity: string, shippingMethod: string, shippingAddress: string, paymentMethod: string, promoCode: ?string} $shippingData
      */
-    public function checkout(int $userId): int
+    public function checkout(int $userId, array $shippingData): int
     {
+        $this->validateShipping($shippingData);
+
         $items = $this->cart->checkoutItems($userId);
 
         if (empty($items)) {
@@ -41,13 +51,36 @@ final class OrderService
         $pdo->beginTransaction();
 
         try {
-            $totalPrice = 0.0;
+            $subtotal = 0.0;
 
             foreach ($items as $item) {
-                $totalPrice += (float) $item['price'] * (int) $item['quantity'];
+                $subtotal += (float) $item['price'] * (int) $item['quantity'];
             }
 
-            $orderId = $this->orders->create($userId, $totalPrice);
+            $shippingCost = $subtotal >= self::FREE_SHIPPING_THRESHOLD ? 0.0 : self::FLAT_SHIPPING_COST;
+
+            $discount = 0.0;
+            $promoCode = null;
+
+            if (!empty($shippingData['promoCode'])) {
+                $promo = $this->promo->validate((string) $shippingData['promoCode'], $subtotal);
+                $discount = $promo['discount'];
+                $promoCode = $promo['code'];
+            }
+
+            $totalPrice = max(0.0, $subtotal + $shippingCost - $discount);
+
+            $orderId = $this->orders->create($userId, $totalPrice, [
+                'name' => $shippingData['shippingName'],
+                'phone' => $shippingData['shippingPhone'],
+                'city' => $shippingData['shippingCity'],
+                'method' => $shippingData['shippingMethod'],
+                'address' => $shippingData['shippingAddress'],
+                'paymentMethod' => $shippingData['paymentMethod'],
+                'promoCode' => $promoCode,
+                'discount' => $discount,
+                'shippingCost' => $shippingCost,
+            ]);
 
             foreach ($items as $item) {
                 $reserved = $this->products->decreaseStock(
@@ -133,6 +166,23 @@ final class OrderService
         $this->orders->updateStatus($orderId, $newStatus);
     }
 
+    private function validateShipping(array $data): void
+    {
+        foreach (['shippingName', 'shippingPhone', 'shippingCity', 'shippingMethod', 'shippingAddress', 'paymentMethod'] as $field) {
+            if (empty($data[$field])) {
+                throw new ValidationException("Shipping field \"{$field}\" is required");
+            }
+        }
+
+        if (!in_array($data['shippingMethod'], self::SHIPPING_METHODS, true)) {
+            throw new ValidationException('Invalid shipping method');
+        }
+
+        if (!in_array($data['paymentMethod'], self::PAYMENT_METHODS, true)) {
+            throw new ValidationException('Invalid payment method');
+        }
+    }
+
     private function withItems(Order $order): Order
     {
         return new Order(
@@ -144,6 +194,15 @@ final class OrderService
             items: $this->orders->itemsForOrder($order->id),
             customerName: $order->customerName,
             customerEmail: $order->customerEmail,
+            shippingName: $order->shippingName,
+            shippingPhone: $order->shippingPhone,
+            shippingCity: $order->shippingCity,
+            shippingMethod: $order->shippingMethod,
+            shippingAddress: $order->shippingAddress,
+            paymentMethod: $order->paymentMethod,
+            promoCode: $order->promoCode,
+            discount: $order->discount,
+            shippingCost: $order->shippingCost,
         );
     }
 }

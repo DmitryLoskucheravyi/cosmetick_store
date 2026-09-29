@@ -26,4 +26,7 @@ interface ProductRepositoryInterface
     public function increaseStock(int $id, int $quantity): void;
 
     public function count(): int;
+
+    /** @return array{min: float, max: float} */
+    public function priceRange(): array;
 }

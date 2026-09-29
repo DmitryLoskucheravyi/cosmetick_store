@@ -46,4 +46,27 @@ final class AuthMiddleware
 
         return $user;
     }
+
+    /**
+     * Same as authenticate(), but for endpoints anyone may use (e.g.
+     * leaving a review) that still want to attribute the action to a real
+     * account when one is logged in. A missing, expired or otherwise
+     * invalid token is treated as "anonymous", not an error.
+     */
+    public function optional(Request $request): ?User
+    {
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return null;
+        }
+
+        $decoded = $this->jwt->verify($token);
+
+        if (!$decoded) {
+            return null;
+        }
+
+        return $this->users->findById((int) $decoded->id);
+    }
 }

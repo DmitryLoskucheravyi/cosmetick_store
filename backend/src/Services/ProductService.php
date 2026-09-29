@@ -41,6 +41,11 @@ final class ProductService
         ];
     }
 
+    public function priceRange(): array
+    {
+        return $this->products->priceRange();
+    }
+
     public function find(int $id): array
     {
         $product = $this->products->findById($id);

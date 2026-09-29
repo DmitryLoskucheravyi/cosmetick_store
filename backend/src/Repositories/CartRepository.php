@@ -23,6 +23,7 @@ final class CartRepository implements CartRepositoryInterface
                 p.title,
                 p.price,
                 p.image,
+                p.categoryId,
                 (p.price * c.quantity) AS total
              FROM cart c
              INNER JOIN products p ON p.id = c.productId
