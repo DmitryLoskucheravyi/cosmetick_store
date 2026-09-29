@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import { Link } from 'react-router-dom';
 
 import ProductCard from '../components/common/ProductCard';
+import ProductGridSkeleton from '../components/common/ProductGridSkeleton';
 import Section from '../components/common/Section';
 import Blob from '../components/common/Blob';
 import TestimonialCard from '../components/common/TestimonialCard';
@@ -58,8 +59,14 @@ const collageLayout = [
 
 const Home = () => {
     const dispatch = useDispatch();
-    const { homeProducts: products, homePagination: pagination } = useSelector((state) => state.products);
+    const { homeProducts: products, homePagination: pagination, homeLoading } = useSelector((state) => state.products);
     const { categories } = useSelector((state) => state.categories);
+
+    // Covers both the loading fetch itself and the instant before the
+    // mount effect has even dispatched it — skeletons hold the section's
+    // height from the very first paint so real cards popping in don't
+    // shift the page.
+    const showProductSkeletons = homeLoading || (!products.length && !pagination);
 
     useEffect(() => {
         if (!products.length) {
@@ -266,11 +273,35 @@ const Home = () => {
                 </Section>
             )}
 
-            {bestsellers.length > 0 && (
+            {(showProductSkeletons || bestsellers.length > 0) && (
                 <Section title="Bestsellers" subtitle="What everyone keeps coming back for" actionLabel="View all" actionTo="/catalog">
+                    {showProductSkeletons ? (
+                        <ProductGridSkeleton count={6} />
+                    ) : (
+                        <StaggerGroup as="div" stagger={0.08}>
+                            <Grid container spacing={3}>
+                                {bestsellers.map((product) => (
+                                    <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                                        <StaggerItem>
+                                            <TiltCard>
+                                                <ProductCard product={product} />
+                                            </TiltCard>
+                                        </StaggerItem>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </StaggerGroup>
+                    )}
+                </Section>
+            )}
+
+            <Section title="New arrivals" actionLabel="View all" actionTo="/catalog">
+                {showProductSkeletons ? (
+                    <ProductGridSkeleton count={6} />
+                ) : (
                     <StaggerGroup as="div" stagger={0.08}>
                         <Grid container spacing={3}>
-                            {bestsellers.map((product) => (
+                            {featuredProducts.map((product) => (
                                 <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                                     <StaggerItem>
                                         <TiltCard>
@@ -281,23 +312,7 @@ const Home = () => {
                             ))}
                         </Grid>
                     </StaggerGroup>
-                </Section>
-            )}
-
-            <Section title="New arrivals" actionLabel="View all" actionTo="/catalog">
-                <StaggerGroup as="div" stagger={0.08}>
-                    <Grid container spacing={3}>
-                        {featuredProducts.map((product) => (
-                            <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                                <StaggerItem>
-                                    <TiltCard>
-                                        <ProductCard product={product} />
-                                    </TiltCard>
-                                </StaggerItem>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </StaggerGroup>
+                )}
             </Section>
 
             <Section title="How it works" subtitle="From cart to counter in three steps" sx={{ maxWidth: 560 }}>
