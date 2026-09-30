@@ -19,4 +19,4 @@ RUN mkdir -p uploads/products && chmod -R 755 uploads
 ENV PORT=10000
 EXPOSE 10000
 
-CMD ["sh", "-c", "php -S 0.0.0.0:${PORT} server.php"]
+CMD ["sh", "-c", "php -d display_errors=0 -d log_errors=1 -S 0.0.0.0:${PORT} server.php"]

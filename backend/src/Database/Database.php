@@ -23,7 +23,7 @@ final class Database
         string $port,
         string $name,
         string $username,
-        string $password
+        #[\SensitiveParameter] string $password
     ) {
         try {
             $this->pdo = new PDO(
